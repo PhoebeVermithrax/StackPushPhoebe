@@ -1,9 +1,9 @@
 /*
  * Created by: Phoebe Vermithrax
- * Created on: 05-March-2018
+ * Created on: 05/06/07-March-2018
  * Created for: ICS4U
- * Daily Assignment – Day #15 & 16
- * This program gets the user's input, pushes it onto a stack and can also pop it.
+ * Daily Assignment – Day #15 & 16 & 17 & 18
+ * This program gets the user's input, pushes it onto a stack and can also pop it, check the peak, and clear the list.
 */
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.Button;
 import java.util.Stack;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+//Import javax.swing to allow message boxes.
+import javax.swing.*;
 
 public class StackPush {
 
@@ -68,13 +70,39 @@ public class StackPush {
 	public String PopStack(String tmpValue)
 	{
 		//Create a value to hold the result.
-		String valuePop;
+		String valuePop = null; 
 		
 		//Pop the stack.
 		valuePop = stackPush.pop();
-		
+
 		//Return the result.
 		return valuePop;
+	}
+	
+	public String PeakStack (String tmpValue)
+	{
+		//Create a value to hold the result.
+		String valuePeak = null;
+		
+		try
+		{
+			//Find the peak of the stack.
+			valuePeak = stackPush.peek();
+		}
+		catch (Exception ref)
+		{
+			//Show a message, telling the user that there's nothing to peak.
+			JOptionPane.showMessageDialog(null, "There's nothing in the stack.");
+		}
+		
+		//Return the result.
+		return valuePeak;
+	}
+	
+	public void ClearStack()
+	{
+		//Clear the stack.
+		stackPush.removeAllElements();
 	}
 
 	
@@ -94,7 +122,19 @@ public class StackPush {
 		txtValue.setBounds(213, 25, 155, 21);
 		
 		List lstOfValues = new List(shell, SWT.BORDER);
-		lstOfValues.setBounds(52, 99, 316, 140);
+		lstOfValues.setBounds(52, 80, 316, 140);
+		
+		Label lblPeak = new Label(shell, SWT.NONE);
+		lblPeak.setBounds(133, 226, 55, 15);
+		lblPeak.setText("New Label");
+		//Set the label to invisible.
+		lblPeak.setVisible(false);
+
+		Label lblPopped = new Label(shell, SWT.NONE);
+		lblPopped.setBounds(313, 226, 55, 15);
+		lblPopped.setText("New Label");
+		//Set the label to invisible.
+		lblPopped.setVisible(false);
 		
 		Button btnAddValue = new Button(shell, SWT.NONE);
 		btnAddValue.addSelectionListener(new SelectionAdapter() {
@@ -108,6 +148,13 @@ public class StackPush {
 				//Get the text from the textbox.
 				value = txtValue.getText();
 				
+				//If the user added nothing in the textbox,
+				if (value == "")
+				{
+					//Tell them that this is invalid.
+					JOptionPane.showMessageDialog(null, "There is no input.");
+				}
+				
 				//Pass value to the function, PushStack
 				listPush = PushStack(value);
 				
@@ -116,7 +163,7 @@ public class StackPush {
 				
 			}
 		});
-		btnAddValue.setBounds(52, 68, 75, 25);
+		btnAddValue.setBounds(52, 49, 65, 25);
 		btnAddValue.setText("Add Value");
 		
 		Button btnRemoveValue = new Button(shell, SWT.NONE);
@@ -131,15 +178,77 @@ public class StackPush {
 				//Get the string from the text.
 				value = txtValue.getText();
 				
-				//Call the function, PopStack and pass the value.
-				listPop = PopStack(value);
+				try 
+				{
+					//Call the function, PopStack and pass the value.
+					listPop = PopStack(value);
+					
+					//Remove the value from the listbox.
+					lstOfValues.remove(listPop);
+					
+					lblPopped.setVisible(true);
+					lblPopped.setText("" + listPop);
+					
+				}
+				catch (Exception ref)
+				{
+					//Tell the user that there's nothing to remove.
+					JOptionPane.showMessageDialog(null, "There's nothing to remove");
+				}
 				
-				//Remove the value from the listbox.
-				lstOfValues.remove(listPop);
 			}
 		});
-		btnRemoveValue.setBounds(282, 68, 86, 25);
+		btnRemoveValue.setBounds(123, 49, 86, 25);
 		btnRemoveValue.setText("Remove Value");
+		
+		Button btnPeak = new Button(shell, SWT.NONE);
+		btnPeak.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				//Create variables for the value.
+				String value;
+				String listPeak;
+				
+				//Get the string from the text.
+				value = txtValue.getText();
+				
+				//Call the function, PopStack and pass the value.
+				listPeak = PeakStack(value);
+				
+				//Enter this into a label.
+				lblPeak.setVisible(true);
+				lblPeak.setText("" + listPeak);
+			}
+		});
+		btnPeak.setBounds(232, 49, 65, 25);
+		btnPeak.setText("Peak");
+		
+		Button btnClear = new Button(shell, SWT.NONE);
+		btnClear.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				//Call the function, ClearStack, to clear the stack.
+				ClearStack();
+				
+				//Clear the listbox.
+				lstOfValues.removeAll();
+			}
+		});
+		btnClear.setBounds(303, 49, 65, 25);
+		btnClear.setText("Clear");
+		
+		Label lblThePeak = new Label(shell, SWT.NONE);
+		lblThePeak.setBounds(52, 226, 76, 15);
+		lblThePeak.setText("The peak is:");
+		
+		Label lblPoppedValue = new Label(shell, SWT.NONE);
+		lblPoppedValue.setBounds(213, 226, 84, 15);
+		lblPoppedValue.setText("Popped Value:");
+		
+		
+		
 
 	}
 }
